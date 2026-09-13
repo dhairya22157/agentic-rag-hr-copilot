@@ -1,15 +1,20 @@
 import sys
-from app.advanced_rag import AdvancedRAG
+from app.agentic_rag import LangGraphAgenticRAG
+
+def print_trace(trace):
+    print("\n[Decision Trace]:")
+    for step in trace:
+        print(f"  -> {step}")
 
 def main():
-    print("=" * 60)
-    print("  Enterprise HR AI Copilot (Groq LLM + Pinecone + Hugging Face)")
-    print("=" * 60)
-    print("Initializing Advanced RAG Pipeline (connecting to Pinecone & Groq)...")
+    print("=" * 65)
+    print("  LangGraph Agentic HR Copilot (Groq + Pinecone + Tavily Web Search)")
+    print("=" * 65)
+    print("Initializing LangGraph Agentic Workflow...")
     
     try:
-        rag = AdvancedRAG()
-        print("[OK] System Ready!\n")
+        agent = LangGraphAgenticRAG()
+        print("[OK] Agentic Workflow Ready!\n")
     except Exception as e:
         print(f"[ERR] Initialization failed: {e}")
         return
@@ -18,43 +23,56 @@ def main():
     if len(sys.argv) > 1:
         query = " ".join(sys.argv[1:])
         print(f"Question: {query}\n")
-        resp = rag.ask(query)
-        print("Answer:")
+        resp = agent.ask(query)
+        print_trace(resp.decision_trace)
+        print("\n" + "=" * 65)
+        print(f"SOURCE TYPE: {resp.source_type.upper()}")
+        print("=" * 65)
+        print("Answer:\n")
         print(resp.answer)
         if resp.citations:
             print("\nCitations:")
-            for c in resp.citations:
-                print(f"  * [Source: {c.source}, Page: {c.page_number}]")
+            for c in resp.citations[:4]:
+                if c.page_number:
+                    print(f"  * [Document: {c.source}, Page: {c.page_number}]")
+                else:
+                    print(f"  * [Web: {c.source}]")
         return
 
-    print("Type your HR question below (or type 'exit' to quit).\n")
+    print("Type your question below (or type 'exit' to quit).")
+    print("Try asking about internal policies OR external statutory laws!\n")
+    
     while True:
         try:
-            query = input("Ask HR Question > ").strip()
+            query = input("Ask Copilot > ").strip()
             if not query:
                 continue
             if query.lower() in ("exit", "quit", "q"):
                 print("Goodbye!")
                 break
 
-            print("\nSearching policy documents & synthesizing...")
-            resp = rag.ask(query)
+            print("\nExecuting LangGraph Agentic Workflow...")
+            resp = agent.ask(query)
             
-            print("\n" + "-" * 50)
-            print(f"Rewritten Query : {resp.rewritten_query}")
-            print(f"Evidence Used   : {resp.relevant_chunks_count} relevant chunks out of {resp.retrieved_chunks_count}")
-            print("-" * 50)
-            print(f"\nAnswer:\n{resp.answer}\n")
+            print_trace(resp.decision_trace)
+            
+            print("\n" + "=" * 65)
+            print(f"SOURCE: {resp.source_type.upper()} | MODEL: {resp.model_used}")
+            print("=" * 65)
+            print(f"Answer:\n\n{resp.answer}\n")
             
             if resp.citations:
-                print("Verified Citations:")
+                print("Verified Sources / Citations:")
                 seen = set()
-                for c in resp.citations:
-                    citation_key = (c.source, c.page_number)
-                    if citation_key not in seen:
-                        seen.add(citation_key)
-                        print(f"  * [Source: {c.source}, Page: {c.page_number}]")
-            print("=" * 60 + "\n")
+                for c in resp.citations[:4]:
+                    key = (c.source, c.page_number)
+                    if key not in seen:
+                        seen.add(key)
+                        if c.page_number:
+                            print(f"  * [File: {c.source}, Page: {c.page_number}]")
+                        else:
+                            print(f"  * [Web Source: {c.source}]")
+            print("=" * 65 + "\n")
             
         except KeyboardInterrupt:
             print("\nExiting...")

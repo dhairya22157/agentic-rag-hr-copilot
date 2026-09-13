@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Dict, Any, Optional, TypedDict
 from pydantic import BaseModel, Field
 
 
@@ -26,9 +26,9 @@ class DocumentChunk(BaseModel):
 
 class Citation(BaseModel):
     """Source reference for evidence grounding in generated answers."""
-    source: str = Field(..., description="Filename containing the cited information")
-    page_number: int = Field(..., description="Page number where the information appears")
-    chunk_id: str = Field(..., description="Chunk ID for provenance tracking")
+    source: str = Field(..., description="Filename or web URL containing the cited information")
+    page_number: Optional[int] = Field(default=None, description="Page number where the information appears (for documents)")
+    chunk_id: Optional[str] = Field(default=None, description="Chunk ID for provenance tracking")
     snippet: str = Field(..., description="Short snippet supporting the answer")
 
 
@@ -47,12 +47,31 @@ class EvidenceGrade(BaseModel):
 
 
 class RAGResponse(BaseModel):
-    """Standardized response from RAG and Advanced RAG pipelines."""
+    """Standardized response from RAG, Advanced RAG, and LangGraph Agentic pipelines."""
     question: str = Field(..., description="Original user question")
     rewritten_query: Optional[str] = Field(default=None, description="Search-optimized reformulated query")
     answer: str = Field(..., description="Synthesized, grounded answer")
     citations: List[Citation] = Field(default_factory=list, description="Direct source citations")
-    retrieved_chunks_count: int = Field(default=0, description="Total chunks fetched from vector store")
+    retrieved_chunks_count: int = Field(default=0, description="Total chunks fetched from vector store or web")
     relevant_chunks_count: int = Field(default=0, description="Chunks retained after relevance grading")
     is_grounded: bool = Field(default=True, description="Whether answer is strictly supported by evidence")
     model_used: str = Field(default="", description="LLM used for synthesis")
+    source_type: str = Field(default="kb", description="Origin of evidence: 'kb', 'web', or 'fallback'")
+    decision_trace: List[str] = Field(default_factory=list, description="Audit trail of agent routing & grading steps")
+
+
+class AgentState(TypedDict):
+    """State graph object flowing through the LangGraph Agentic RAG workflow."""
+    question: str
+    original_question: str
+    router_decision: str
+    documents: List[Dict[str, Any]]
+    web_results: List[Dict[str, Any]]
+    kb_evidence_grade: str
+    web_evidence_grade: str
+    retry_count: int
+    max_retries: int
+    answer: str
+    citations: List[Citation]
+    source_type: str
+    decision_trace: List[str]
