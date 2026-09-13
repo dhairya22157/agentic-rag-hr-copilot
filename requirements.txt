@@ -1,0 +1,15 @@
+python-dotenv
+pydantic
+pydantic-settings
+pymupdf
+python-docx
+langchain
+langchain-text-splitters
+pinecone
+openai
+langgraph
+tavily-python
+fastapi
+uvicorn
+ragas
+pytest
