@@ -75,3 +75,41 @@ class AgentState(TypedDict):
     citations: List[Citation]
     source_type: str
     decision_trace: List[str]
+
+
+class ChatRequest(BaseModel):
+    """Payload for /chat endpoint."""
+    question: str = Field(..., description="User question to HR Copilot")
+
+
+class FeedbackRequest(BaseModel):
+    """Payload for /feedback endpoint."""
+    question: str
+    answer: str
+    rating: str = Field(..., description="'up' or 'down'")
+    comments: Optional[str] = Field(default="", description="Optional user comment")
+
+
+class UploadResponse(BaseModel):
+    """Response returned after uploading and auto-indexing a document."""
+    status: str
+    filename: str
+    doc_id: str
+    chunks_indexed: int
+    message: str
+
+
+class AdminDocInfo(BaseModel):
+    """Metadata for an uploaded file."""
+    filename: str
+    size_bytes: int
+    modified_at: str
+    file_type: str
+
+
+class AdminDocsResponse(BaseModel):
+    """Response returned for admin documents listing."""
+    total_docs: int
+    total_vectors_in_pinecone: int
+    documents: List[AdminDocInfo]
+

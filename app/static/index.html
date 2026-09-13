@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Enterprise HR AI Copilot</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="logo-icon">🤖</div>
+      <div class="logo-text">
+        <h1>HR Copilot</h1>
+        <span class="sub-badge">Agentic RAG • LangGraph • Groq</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="status-indicator">
+        <span class="pulse-dot"></span>
+        <span class="status-text">Pinecone & Groq Online</span>
+      </div>
+      <button class="nav-btn" id="openLogsBtn">📊 Logs</button>
+      <button class="nav-btn admin-btn" id="openAdminBtn">🔐 Admin Portal</button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="chat-container">
+    <div class="chat-wrapper">
+      
+      <!-- Messages Thread -->
+      <div class="messages-area" id="messagesArea">
+        <!-- Welcome Card -->
+        <div class="welcome-card" id="welcomeCard">
+          <div class="welcome-icon">👋</div>
+          <h2>HR Copilot</h2>
+          <p class="welcome-sub">How can I help you today?</p>
+          <p class="welcome-desc">Ask about leave entitlements, internal company policies, or external labor regulations.</p>
+          
+          <!-- Suggestion Chips -->
+          <div class="chips-container">
+            <button class="chip" data-query="How many leave days do I get per year?">
+              🗓️ How many leave days do I get?
+            </button>
+            <button class="chip" data-query="What is the policy on bereavement leave?">
+              🕊️ What is the bereavement leave policy?
+            </button>
+            <button class="chip" data-query="Can I carry forward my unused leave to next year?">
+              🔄 Can I carry forward unused leave?
+            </button>
+            <button class="chip" data-query="What is the federal minimum wage in the US for 2026?">
+              🌐 What is the federal minimum wage in 2026?
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input Bar -->
+      <div class="input-container">
+        <form id="chatForm" class="chat-form">
+          <input
+            type="text"
+            id="userInput"
+            placeholder="Ask a question about HR policies or labor laws..."
+            autocomplete="off"
+            required
+          />
+          <button type="submit" id="sendBtn" class="send-btn" title="Send message">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          </button>
+        </form>
+        <p class="disclaimer-text">
+          Grounded answers backed by verified ABC Company documents & Tavily real-time web search.
+        </p>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Admin Modal -->
+  <div class="modal-overlay" id="adminModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>🔐 Admin Document Management</h3>
+        <button class="close-btn" id="closeAdminBtn">&times;</button>
+      </div>
+
+      <!-- Auth Section -->
+      <div id="adminAuthSection" class="modal-body">
+        <p class="modal-subtitle">Enter admin credentials to upload policies and trigger auto-indexing.</p>
+        <form id="adminLoginForm">
+          <div class="form-group">
+            <label for="adminUsername">Username</label>
+            <input type="text" id="adminUsername" placeholder="e.g. admin" required value="admin" />
+          </div>
+          <div class="form-group">
+            <label for="adminPassword">Password</label>
+            <input type="password" id="adminPassword" placeholder="Admin password" required value="admin123" />
+          </div>
+          <div id="loginError" class="error-msg" style="display: none;"></div>
+          <button type="submit" class="primary-btn full-width">Unlock Admin Controls</button>
+        </form>
+      </div>
+
+      <!-- Upload Section (Shown when authenticated) -->
+      <div id="adminUploadSection" class="modal-body" style="display: none;">
+        <div class="admin-session-bar">
+          <span>Logged in as <strong>admin</strong></span>
+          <button id="adminLogoutBtn" class="text-btn">Sign Out</button>
+        </div>
+
+        <div class="upload-zone" id="dropZone">
+          <div class="upload-icon">📁</div>
+          <h4>Drag & Drop HR Document</h4>
+          <p>Supports <strong>.pdf</strong>, <strong>.docx</strong>, and <strong>.txt</strong></p>
+          <input type="file" id="fileInput" accept=".pdf,.docx,.doc,.txt" style="display: none;" />
+          <button type="button" class="secondary-btn" onclick="document.getElementById('fileInput').click()">
+            Browse File
+          </button>
+          <div id="selectedFileName" class="selected-file"></div>
+        </div>
+
+        <button id="uploadBtn" class="primary-btn full-width" style="margin-top: 16px;" disabled>
+          ⚡ Upload & Auto-Index into Pinecone
+        </button>
+
+        <!-- Pipeline Progress Display -->
+        <div id="pipelineProgress" class="pipeline-card" style="display: none;">
+          <div class="spinner"></div>
+          <span id="pipelineStatusText">Processing Ingestion Pipeline...</span>
+        </div>
+
+        <!-- Success Result -->
+        <div id="uploadResult" class="upload-result-card" style="display: none;"></div>
+
+        <!-- Existing Documents -->
+        <div class="existing-docs-section">
+          <div class="docs-header">
+            <h4>Indexed Documents</h4>
+            <button id="refreshDocsBtn" class="text-btn">🔄 Refresh</button>
+          </div>
+          <div id="adminDocsList" class="docs-list">Loading...</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Audit Logs Modal -->
+  <div class="modal-overlay" id="logsModal">
+    <div class="modal-card wide-card">
+      <div class="modal-header">
+        <h3>📊 Agentic RAG Decision Traces</h3>
+        <button class="close-btn" id="closeLogsBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-subtitle">Real-time audit log of agent routing, evidence grading, and retries.</p>
+        <div id="logsContainer" class="logs-container">Loading logs...</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

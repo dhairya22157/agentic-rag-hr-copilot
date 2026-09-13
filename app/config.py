@@ -39,5 +39,9 @@ class Settings(BaseSettings):
     CHUNK_SIZE: int = Field(default=700, description="Default character chunk size")
     CHUNK_OVERLAP: int = Field(default=120, description="Default character chunk overlap")
 
+    # Admin Authentication for Document Management
+    ADMIN_USERNAME: str = Field(default="admin", description="Admin username for document uploads")
+    ADMIN_PASSWORD: str = Field(default="admin123", description="Admin password for document uploads")
+
 
 settings = Settings()
