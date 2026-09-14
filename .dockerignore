@@ -1,0 +1,36 @@
+# Git & VCS
+.git/
+.gitignore
+
+# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+
+# Python Cache & Artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Jupyter Notebooks & Tests
+notebooks/
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+.pytest_cache/
+tests/
+
+# Local Environment & Secrets (Passed via compose or runtime)
+.env
+.env.*
+!.env.example
+
+# Scratch & Temporary
+scratch/
+*.log
+
+# OS Files
+.DS_Store
+Thumbs.db

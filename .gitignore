@@ -1,9 +1,42 @@
+# Environment & Secrets
 .env
+.env.*
+!.env.example
+
+# Virtual Environments
 venv/
+.venv/
+env/
+ENV/
+
+# Python Cache & Bytecode
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+*.so
+.Python
 
-data/uploads/
-data/processed/
+# Jupyter Notebook Checkpoints
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
 
+# Local Runtime Data & Logs
+data/*.json
+*.log
+logs/
+
+# Testing & Coverage
 .pytest_cache/
+.coverage
+htmlcov/
+
+# Editor & IDE artifacts
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS Generated Files
+.DS_Store
+Thumbs.db
+desktop.ini

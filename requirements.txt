@@ -1,15 +1,31 @@
+# Environment & Settings
 python-dotenv
 pydantic
 pydantic-settings
+
+# Document Ingestion & Parsing
 pymupdf
 python-docx
-langchain
 langchain-text-splitters
+langchain
+
+# Vector Store & Search
 pinecone
-openai
-langgraph
 tavily-python
+
+# LLM Providers
+groq
+openai
+
+# Agentic Orchestration
+langgraph
+
+# Backend API & Server
 fastapi
 uvicorn
+python-multipart
+
+# Notebook & Development
+ipykernel
 ragas
 pytest
