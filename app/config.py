@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from pydantic import Field
+from pydantic import Field, AliasChoices
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # Base directories
@@ -16,11 +16,19 @@ class Settings(BaseSettings):
     )
 
     # Groq LLM Configuration
-    GROQ_API_KEY: str = Field(default="", description="Groq API key for LLM inference")
+    GROQ_API_KEY: str = Field(
+        default="",
+        description="Groq API key for LLM inference",
+        validation_alias=AliasChoices("GROQ_API_KEY", "GROQ_KEY")
+    )
     GROQ_MODEL: str = Field(default="qwen/qwen3.8-27b", description="Groq model name")
 
     # Hugging Face Embeddings Configuration
-    HUGGINGFACEHUB_API_TOKEN: str = Field(default="", description="Hugging Face API token")
+    HUGGINGFACEHUB_API_TOKEN: str = Field(
+        default="",
+        description="Hugging Face API token",
+        validation_alias=AliasChoices("HUGGINGFACEHUB_API_TOKEN", "HF_TOKEN", "HUGGINGFACE_API_KEY")
+    )
     EMBEDDING_MODEL: str = Field(
         default="BAAI/bge-large-en-v1.5",
         description="Hugging Face model for embeddings (1024-dim matches Pinecone index)"
@@ -28,12 +36,24 @@ class Settings(BaseSettings):
     EMBEDDING_DIMENSION: int = Field(default=1024, description="Embedding vector dimension")
 
     # Pinecone Vector Store Configuration
-    PINECONE_API_KEY: str = Field(default="", description="Pinecone API key")
-    index_name: str = Field(default="ragbot", description="Pinecone index name")
+    PINECONE_API_KEY: str = Field(
+        default="",
+        description="Pinecone API key",
+        validation_alias=AliasChoices("PINECONE_API_KEY", "PINECONE_KEY")
+    )
+    index_name: str = Field(
+        default="ragbot",
+        description="Pinecone index name",
+        validation_alias=AliasChoices("index_name", "PINECONE_INDEX_NAME", "INDEX_NAME")
+    )
     PINECONE_NAMESPACE: str = Field(default="", description="Optional Pinecone namespace")
 
     # Tavily Web Search (fallback)
-    TAVILY_API_KEY: str = Field(default="", description="Tavily API key")
+    TAVILY_API_KEY: str = Field(
+        default="",
+        description="Tavily API key",
+        validation_alias=AliasChoices("TAVILY_API_KEY", "TAVILY_KEY")
+    )
 
     # Chunking defaults
     CHUNK_SIZE: int = Field(default=700, description="Default character chunk size")

@@ -1,4 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // Dynamic API Base URL (Relative if served together on Render, or remote URL if frontend is deployed on Vercel/Netlify)
+  const API_BASE = window.API_BASE || "";
+
   // Elements
   const messagesArea = document.getElementById("messagesArea");
   const welcomeCard = document.getElementById("welcomeCard");
@@ -71,15 +74,30 @@ document.addEventListener("DOMContentLoaded", () => {
     const loadingId = appendLoadingMessage();
 
     try {
-      const response = await fetch("/chat", {
+      const response = await fetch(`${API_BASE}/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question: query })
       });
 
       if (!response.ok) {
-        const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.detail || `Server error (${response.status})`);
+        const errText = await response.text();
+        let errMsg = `Server error (${response.status})`;
+        try {
+          const errData = JSON.parse(errText);
+          if (typeof errData.detail === "string") {
+            errMsg = errData.detail;
+          } else if (errData.detail) {
+            errMsg = JSON.stringify(errData.detail);
+          } else if (errData.message) {
+            errMsg = errData.message;
+          }
+        } catch (e) {
+          if (errText && errText.trim().length > 0 && errText.length < 250) {
+            errMsg = `${errText} (${response.status})`;
+          }
+        }
+        throw new Error(errMsg);
       }
 
       const data = await response.json();
@@ -280,7 +298,7 @@ document.addEventListener("DOMContentLoaded", () => {
       upBtn.disabled = true;
       downBtn.disabled = true;
       try {
-        await fetch("/feedback", {
+        await fetch(`${API_BASE}/feedback`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -359,6 +377,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   openAdminBtn.addEventListener("click", () => {
     adminModal.classList.add("active");
+    if (!sessionStorage.getItem("admin_auth")) {
+      adminUsernameInput.value = "";
+      adminPasswordInput.value = "";
+    }
     updateAdminUI();
   });
 
@@ -380,11 +402,15 @@ document.addEventListener("DOMContentLoaded", () => {
     // Store credentials in session
     sessionStorage.setItem("admin_auth", JSON.stringify({ user, pass }));
     loginError.style.display = "none";
+    adminUsernameInput.value = "";
+    adminPasswordInput.value = "";
     updateAdminUI();
   });
 
   adminLogoutBtn.addEventListener("click", () => {
     sessionStorage.removeItem("admin_auth");
+    adminUsernameInput.value = "";
+    adminPasswordInput.value = "";
     updateAdminUI();
   });
 
@@ -442,7 +468,7 @@ document.addEventListener("DOMContentLoaded", () => {
     uploadResult.style.display = "none";
 
     try {
-      const response = await fetch("/upload", {
+      const response = await fetch(`${API_BASE}/upload`, {
         method: "POST",
         body: formData
       });
@@ -487,7 +513,7 @@ document.addEventListener("DOMContentLoaded", () => {
   async function fetchAdminDocs() {
     adminDocsList.innerHTML = "<span style='font-size:12px;color:#64748b;'>Loading indexed documents...</span>";
     try {
-      const res = await fetch("/admin/docs");
+      const res = await fetch(`${API_BASE}/admin/docs`);
       const data = await res.json();
 
       if (!data.documents || data.documents.length === 0) {
@@ -516,7 +542,7 @@ document.addEventListener("DOMContentLoaded", () => {
     logsModal.classList.add("active");
     logsContainer.innerHTML = "<span>Fetching latest traces...</span>";
     try {
-      const res = await fetch("/logs?limit=10");
+      const res = await fetch(`${API_BASE}/logs?limit=10`);
       const data = await res.json();
       if (!data.logs || data.logs.length === 0) {
         logsContainer.innerHTML = "<span style='color:#64748b;'>No query logs recorded yet. Ask a question first!</span>";

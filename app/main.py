@@ -122,18 +122,20 @@ async def chat_endpoint(request: ChatRequest):
     Executes routing, Pinecone KB retrieval, evidence grading, Tavily web fallback, and grounded synthesis.
     """
     global agentic_rag
-    if not agentic_rag:
-        agentic_rag = LangGraphAgenticRAG()
 
     question = request.question.strip()
     if not question:
         raise HTTPException(status_code=400, detail="Question cannot be empty.")
 
     try:
+        if not agentic_rag:
+            agentic_rag = LangGraphAgenticRAG()
         response = agentic_rag.ask(question)
         log_query_event(response)
         return response
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Error generating answer: {str(e)}")
 
 
@@ -322,6 +324,12 @@ async def health_check():
             "embedding_model": settings.EMBEDDING_MODEL,
             "groq_model": settings.GROQ_MODEL,
             "tavily_search": bool(settings.TAVILY_API_KEY)
+        },
+        "keys_configured": {
+            "groq_api_key": bool(settings.GROQ_API_KEY),
+            "huggingface_token": bool(settings.HUGGINGFACEHUB_API_TOKEN),
+            "pinecone_api_key": bool(settings.PINECONE_API_KEY),
+            "tavily_api_key": bool(settings.TAVILY_API_KEY)
         }
     }
 
