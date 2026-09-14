@@ -241,7 +241,7 @@ rag-project/
    TAVILY_API_KEY=tvly-your_tavily_key
 
    ADMIN_USERNAME=admin
-   ADMIN_PASSWORD=admin123
+   ADMIN_PASSWORD=your_secure_password
    ```
 
 5. **Start the application:**
@@ -324,12 +324,14 @@ The repository includes a [`render.yaml`](render.yaml) Blueprint for automated 1
 
 ---
 
-## 🔐 Default Admin Credentials
+## 🔐 Admin Portal Access
 
-- **Username**: `admin`
-- **Password**: `admin123`
+The Admin Portal enables authorized administrators to upload company HR policies (`.pdf`, `.docx`, `.txt`) with real-time text sanitization, recursive chunking, and automated vector indexing into Pinecone.
 
-*(To customize, update `ADMIN_USERNAME` and `ADMIN_PASSWORD` in your `.env` file or Render Environment tab).*
+> [!NOTE]
+> In case you want to test the admin portal, please mail me to request demo credentials.
+>
+> *(For self-hosted instances, you can configure your own `ADMIN_USERNAME` and `ADMIN_PASSWORD` in your `.env` file or Render Environment tab).*
 
 ---
 
