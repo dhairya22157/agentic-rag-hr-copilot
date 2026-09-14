@@ -82,17 +82,19 @@ flowchart TD
     FallbackAnswer --> OutputAnswer
     OutputAnswer --> EndNode([Delivered to User UI])
 
-    style Start fill:#e0f2fe,stroke:#0284c7,stroke-width:2px;
-    style Router fill:#fef3c7,stroke:#d97706,stroke-width:2px;
-    style PineconeRetrieve fill:#ede9fe,stroke:#7c3aed,stroke-width:2px;
-    style GradeKB fill:#fef08a,stroke:#ca8a04,stroke-width:2px;
-    style GenerateKB fill:#dcfce7,stroke:#16a34a,stroke-width:2px;
-    style TavilySearch fill:#ffedd5,stroke:#ea580c,stroke-width:2px;
-    style GradeWeb fill:#fef08a,stroke:#ca8a04,stroke-width:2px;
-    style GenerateWeb fill:#dcfce7,stroke:#16a34a,stroke-width:2px;
-    style RewriteQuery fill:#fee2e2,stroke:#dc2626,stroke-width:2px;
-    style OutputAnswer fill:#dcfce7,stroke:#15803d,stroke-width:2px;
-    style EndNode fill:#e0f2fe,stroke:#0284c7,stroke-width:2px;
+    style Start fill:#e0f2fe,stroke:#0284c7,stroke-width:2px,color:#000000,font-weight:bold;
+    style Router fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#000000,font-weight:bold;
+    style PineconeRetrieve fill:#ede9fe,stroke:#7c3aed,stroke-width:2px,color:#000000,font-weight:bold;
+    style GradeKB fill:#fef08a,stroke:#ca8a04,stroke-width:2px,color:#000000,font-weight:bold;
+    style GenerateKB fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#000000,font-weight:bold;
+    style TavilySearch fill:#ffedd5,stroke:#ea580c,stroke-width:2px,color:#000000,font-weight:bold;
+    style GradeWeb fill:#fef08a,stroke:#ca8a04,stroke-width:2px,color:#000000,font-weight:bold;
+    style GenerateWeb fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#000000,font-weight:bold;
+    style RetryCheck fill:#fef08a,stroke:#ca8a04,stroke-width:2px,color:#000000,font-weight:bold;
+    style RewriteQuery fill:#fee2e2,stroke:#dc2626,stroke-width:2px,color:#000000,font-weight:bold;
+    style FallbackAnswer fill:#f1f5f9,stroke:#64748b,stroke-width:2px,color:#000000,font-weight:bold;
+    style OutputAnswer fill:#dcfce7,stroke:#15803d,stroke-width:2px,color:#000000,font-weight:bold;
+    style EndNode fill:#e0f2fe,stroke:#0284c7,stroke-width:2px,color:#000000,font-weight:bold;
 ```
 
 ---
